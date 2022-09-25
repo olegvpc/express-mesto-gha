@@ -45,7 +45,7 @@ module.exports.deleteCard = (req, res) => {
         return;
       }
       if (err.name === 'Error') {
-        res.status(NOT_FOUND_CODE).send({ message: `Карточка с указанным _id: ${req.params.cardId} не найден.${err.name} ` });
+        res.status(NOT_FOUND_CODE).send({ message: `Карточка с указанным _id: ${req.params.cardId} не найдена.${err.name} ` });
         return;
       }
       res.status(500).send({ message: 'На сервере произошла ошибка' });
@@ -59,10 +59,20 @@ module.exports.likeCard = (req, res) => {
     { new: true },
   )
     .populate(['likes', 'owner'])
-    .then((card) => res.status(200).send(card))
+    .then((card) => {
+      if (!card) {
+        throw new Error('Карточка не найдена');
+      } else {
+        res.status(200).send(card);
+      }
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(NOT_FOUND_CODE).send({ message: `Передан несуществующий _id: ${req.params.cardId} карточки ${err.name} ` });
+        return;
+      }
+      if (err.name === 'Error') {
+        res.status(NOT_FOUND_CODE).send({ message: `Карточка с указанным _id: ${req.params.cardId} не найдена.${err.name} ` });
         return;
       }
       if (err.name === 'ValidationError') {
@@ -79,10 +89,21 @@ module.exports.dislikeCard = (req, res) => {
     { $pull: { likes: req.user._id } }, // убрать _id из массива
     { new: true },
   )
-    .then((card) => res.status(200).send(card))
+    .populate(['owner', 'likes'])
+    .then((card) => {
+      if (!card) {
+        throw new Error('Карточка не найдена');
+      } else {
+        res.status(200).send(card);
+      }
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(NOT_FOUND_CODE).send({ message: `Передан несуществующий _id: ${req.params.cardId} карточки` });
+        return;
+      }
+      if (err.name === 'Error') {
+        res.status(NOT_FOUND_CODE).send({ message: `Карточка с указанным _id: ${req.params.cardId} не найдена.${err.name} ` });
         return;
       }
       if (err.name === 'ValidationError') {

@@ -26,6 +26,12 @@ app.use((req, res, next) => {
 });
 app.use('/users', usersRoute); // создание/ чтение пользователя/ пользователей
 app.use('/cards', cardsRoute); // создание/ чтение карточек
+app.use('*', (req, res, next) => {
+  res.status(404).send({
+    message: 'Неверный адрес запроса',
+  });
+  next();
+});
 
 app.listen(PORT, () => {
   // console.log('Ссылка на сервер');
