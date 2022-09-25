@@ -34,7 +34,7 @@ module.exports.getCurrentUser = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(NOT_FOUND_CODE).send({ message: `Пользователь с _id: ${req.params.userId} не найден.${err.name} ` });
+        res.status(VALIDATION_ERROR_CODE).send({ message: `Пользователь с _id: ${req.params.userId} не найден.${err.name} ` });
         return;
       }
       if (err.name === 'Error') {

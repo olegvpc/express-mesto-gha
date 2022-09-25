@@ -36,12 +36,12 @@ module.exports.deleteCard = (req, res) => {
       if (!card) {
         throw new Error('Карточка не найдена');
       } else {
-        res.status(301).send({ message: ` Карточка с _id: ${req.params.cardId} удалена` });
+        res.status(200).send({ message: ` Карточка с _id: ${req.params.cardId} удалена` });
       }
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(NOT_FOUND_CODE).send({ message: `Карточка с указанным _id: ${req.params.cardId} не найдена. ${err.name}` });
+        res.status(VALIDATION_ERROR_CODE).send({ message: `Карточка с указанным _id: ${req.params.cardId} не найдена. ${err.name}` });
         return;
       }
       if (err.name === 'Error') {
@@ -68,7 +68,7 @@ module.exports.likeCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(NOT_FOUND_CODE).send({ message: `Передан несуществующий _id: ${req.params.cardId} карточки ${err.name} ` });
+        res.status(VALIDATION_ERROR_CODE).send({ message: `Передан несуществующий _id: ${req.params.cardId} карточки ${err.name} ` });
         return;
       }
       if (err.name === 'Error') {
@@ -99,7 +99,7 @@ module.exports.dislikeCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(NOT_FOUND_CODE).send({ message: `Передан несуществующий _id: ${req.params.cardId} карточки` });
+        res.status(VALIDATION_ERROR_CODE).send({ message: `Передан несуществующий _id: ${req.params.cardId} карточки` });
         return;
       }
       if (err.name === 'Error') {
