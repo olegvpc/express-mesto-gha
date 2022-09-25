@@ -25,10 +25,20 @@ module.exports.createUser = (req, res) => {
 
 module.exports.getCurrentUser = (req, res) => {
   User.findById(req.params.userId)
-    .then((user) => res.status(200).send(user))
+    .then((user) => {
+      if (!user) {
+        throw new Error('Пользователь не найден');
+      } else {
+        res.status(200).send(user);
+      }
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(NOT_FOUND_CODE).send({ message: `Пользователь с _id: ${err.value} не найден.` });
+        res.status(NOT_FOUND_CODE).send({ message: `Пользователь с _id: ${req.params.userId} не найден.${err.name} ` });
+        return;
+      }
+      if (err.name === 'Error') {
+        res.status(NOT_FOUND_CODE).send({ message: `Пользователь с _id: ${req.params.userId} не найден.${err.name} ` });
         return;
       }
       res.status(500).send({ message: 'На сервере произошла ошибка' });

@@ -32,10 +32,20 @@ module.exports.deleteCard = (req, res) => {
   // res.send({ user: req.user._id });
   Card.findByIdAndRemove(req.params.cardId)
     .populate('owner')
-    .then(() => res.status(301).send({ message: ` Карточка с _id: ${req.params.cardId} удалена` }))
+    .then((card) => {
+      if (!card) {
+        throw new Error('Карточка не найдена');
+      } else {
+        res.status(301).send({ message: ` Карточка с _id: ${req.params.cardId} удалена` });
+      }
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(NOT_FOUND_CODE).send({ message: `Карточка с указанным _id: ${req.params.cardId} не найдена.` });
+        res.status(NOT_FOUND_CODE).send({ message: `Карточка с указанным _id: ${req.params.cardId} не найдена. ${err.name}` });
+        return;
+      }
+      if (err.name === 'Error') {
+        res.status(NOT_FOUND_CODE).send({ message: `Карточка с указанным _id: ${req.params.cardId} не найден.${err.name} ` });
         return;
       }
       res.status(500).send({ message: 'На сервере произошла ошибка' });
@@ -52,7 +62,7 @@ module.exports.likeCard = (req, res) => {
     .then((card) => res.status(200).send(card))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(NOT_FOUND_CODE).send({ message: `Передан несуществующий _id: ${req.params.cardId} карточки` });
+        res.status(NOT_FOUND_CODE).send({ message: `Передан несуществующий _id: ${req.params.cardId} карточки ${err.name} ` });
         return;
       }
       if (err.name === 'ValidationError') {
