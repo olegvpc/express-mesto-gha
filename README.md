@@ -27,3 +27,14 @@
 
 `npm run start` — запускает сервер   
 `npm run dev` — запускает сервер с hot-reload
+
+## Полезные инстументы- создание Хардверного пользователя
+```typescript
+// _id созданного пользователя для автоматического добавления req.user._id во всех middleware ниже
+app.use((req, res, next) => {
+  req.user = {
+    _id: '632dd2b94ceb7519db223be0',
+  };
+  next();
+});
+```
