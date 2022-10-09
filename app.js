@@ -12,7 +12,7 @@ const { NotFoundError } = require('./errors/not-found-error');
 
 const {
   PORT = 3000,
-  BASE_PATH = 'http://localhost:3000',
+  // BASE_PATH = 'http://localhost:3000',
 } = process.env;
 
 const limiter = rateLimit({
@@ -31,6 +31,7 @@ app.use(helmet());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+app.use('/', usersRoute); // создание/ чтение пользователя/ пользователей
 app.use('/users', usersRoute); // создание/ чтение пользователя/ пользователей
 app.use('/cards', auth, cardsRoute); // создание/ чтение карточек
 app.use('*', (req, res, next) => {
@@ -54,6 +55,6 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(PORT, () => {
-  console.log('Ссылка на сервер');
-  console.log(BASE_PATH);
+  // console.log('Ссылка на сервер');
+  // console.log(BASE_PATH);
 });

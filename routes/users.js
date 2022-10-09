@@ -42,7 +42,7 @@ router.get('/', auth, getAllUsers);
 router.get('/me', auth, getCurrentUser);
 
 router.get(
-  '/:userId',
+  'users/:userId',
   celebrate({
     params: Joi.object().keys({
       userId: Joi.string().alphanum().length(24),
@@ -52,7 +52,7 @@ router.get(
   getUser,
 );
 router.patch(
-  '/me',
+  'users/me',
   celebrate({
     body: Joi.object().keys({
       name: Joi.string().min(2).max(30),
@@ -63,7 +63,7 @@ router.patch(
   updateUser,
 );
 router.patch(
-  '/me/avatar',
+  'users/me/avatar',
   celebrate({
     body: Joi.object().keys({
       avatar: Joi.string().regex(
