@@ -11,19 +11,17 @@ module.exports.login = (req, res, next) => {
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      // аутентификация успешна! пользователь в переменной user
       const userId = user._id.toString(); // 633e82dc67dc23be53a4d8a4
       // console.log(userId);
       const token = jwt.sign(
         { _id: userId },
         'some-secret-key',
         // NODE_ENV === 'production' ? JWT_SECRET : 'some-secret-key',
-        { expiresIn: '7d' }, // токен будет просрочен через неделю после создания
+        { expiresIn: '7d' },
       );
 
       // вернём токен в cookie и body
       res.cookie('jwt', token, {
-        // token - наш JWT токен, который мы отправляем
         maxAge: 3600 * 24 * 7,
         httpOnly: true,
       // sameSite: true, //  указать браузеру, чтобы тот посылал куки,
@@ -32,7 +30,6 @@ module.exports.login = (req, res, next) => {
         .send({ jwt: token });
     })
     .catch((err) => {
-      // ошибка аутентификации
       if (err.name === 'Error') {
         const error = new UnauthorizedError(`Переданы некорректные данные пользователя.${err.message}- ${err.name} `);
         return next(error);
@@ -90,25 +87,19 @@ module.exports.getCurrentUser = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
       if (!user) {
-        throw new Error('Пользователь не найден');
+        throw new NotFoundError(`Пользователь с _id: ${req.user._id} не найден.`);
       } else {
         res.send(user);
       }
     })
-    .catch((err) => {
-      if (err.name === 'Error' || err.name === 'CastError') {
-        const error = new NotFoundError(`Пользователь с _id: ${req.user._id} не найден.${err.name} `);
-        return next(error);
-      }
-      return next(err);
-    });
+    .catch(next);
 };
 
 module.exports.getUser = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
       if (!user) {
-        throw new Error('Пользователь не найден');
+        throw new NotFoundError(`Пользователь с _id: ${req.params.userId} не найден.`);
       } else {
         res.send(user);
       }
@@ -116,10 +107,6 @@ module.exports.getUser = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         const error = new ValidationError(`Передан некорректный _id: ${req.params.userId} пользователя.${err.name}`);
-        return next(error);
-      }
-      if (err.name === 'Error') {
-        const error = new NotFoundError(`Пользователь с _id: ${req.params.userId} не найден.${err.name} `);
         return next(error);
       }
       return next(err);
@@ -139,18 +126,14 @@ module.exports.updateUser = (req, res, next) => {
   )
     .then((user) => {
       if (!user) {
-        throw new Error('Пользователь не найден');
+        throw new NotFoundError(`Пользователь с _id: ${req.user._id} не найден.`);
       } else {
         res.send(user);
       }
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        const error = new ValidationError(`Передан некорректный _id: ${req.params.userId} пользователя.${err.name}`);
-        return next(error);
-      }
-      if (err.name === 'Error') {
-        const error = new NotFoundError(`Пользователь с _id: ${req.params.userId} не найден.${err.name} `);
+        const error = new ValidationError(`Передан некорректный _id: ${req.user._id} пользователя.${err.name}`);
         return next(error);
       }
       return next(err);
@@ -170,18 +153,14 @@ module.exports.updateAvatar = (req, res, next) => {
   )
     .then((user) => {
       if (!user) {
-        throw new Error('Пользователь не найден');
+        throw new NotFoundError(`Пользователь с _id: ${req.user._id} не найден.`);
       } else {
         res.send(user);
       }
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        const error = new ValidationError(`Передан некорректный _id: ${req.params.userId} пользователя.${err.name}`);
-        return next(error);
-      }
-      if (err.name === 'Error') {
-        const error = new NotFoundError(`Пользователь с _id: ${req.params.userId} не найден.${err.name} `);
+        const error = new ValidationError(`Передан некорректный _id: ${req.user._id} пользователя.${err.name}`);
         return next(error);
       }
       return next(err);

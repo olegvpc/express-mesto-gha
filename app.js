@@ -15,6 +15,7 @@ const {
   login,
   createUser,
 } = require('./controllers/users');
+const { REGEX_URL } = require('./utils/regex-url');
 
 const {
   PORT = 3000,
@@ -56,14 +57,14 @@ app.post(
       password: Joi.string().required(),
       name: Joi.string().min(2).max(30),
       about: Joi.string().min(2).max(30),
-      avatar: Joi.string().regex(/https?:\/\/(www)?[0-9a-z\-._~:/?#[\]@!$&'()*+,;=]+#?$/i),
+      avatar: Joi.string().regex(REGEX_URL),
     }),
   }),
   createUser,
 );
 
-app.use('/users', usersRoute); // создание/ чтение пользователя/ пользователей
-app.use('/cards', auth, cardsRoute); // создание/ чтение карточек
+app.use('/users', usersRoute);
+app.use('/cards', auth, cardsRoute);
 app.use('*', (req, res, next) => {
   const err = new NotFoundError('Неверный адрес запроса');
   return next(err);
@@ -71,7 +72,6 @@ app.use('*', (req, res, next) => {
 app.use(errors()); // обработчик ошибок celebrate
 
 app.use((err, req, res, next) => {
-  // если у ошибки нет статуса, выставляем 500
   const { statusCode = 500, message } = err; // установка дефолтного значения
   res
     .status(statusCode)
