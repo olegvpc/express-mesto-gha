@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const isEmail = require('validator/lib/isEmail'); // использование библиотеки валидации
 const bcrypt = require('bcryptjs'); // импортируем bcrypt для Хэширования пароля
-// const { UnauthorizedError } = require('../errors/unauthorized-error');
+const { REGEX_URL } = require('../utils/regex-url');
 
 const userSchema = new mongoose.Schema(
   {
@@ -37,7 +37,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       // required: true,
       default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
-      validate: /https?:\/\/(www)?[0-9a-z\-._~:/?#[\]@!$&'()*+,;=]+#?$/i,
+      validate: REGEX_URL,
     },
   },
   {
