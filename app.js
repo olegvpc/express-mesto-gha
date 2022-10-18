@@ -6,6 +6,7 @@ const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const { errors } = require('celebrate');
 const { celebrate, Joi } = require('celebrate');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const { auth } = require('./middlewares/auth');
 const usersRoute = require('./routes/users');
@@ -29,10 +30,10 @@ const limiter = rateLimit({
 
 const app = express();
 
-mongoose.connect('mongodb://localhost:27017/mestodb');
+mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
 
 app.use(limiter);
-
+app.use(requestLogger); // логирование запросов
 app.use(helmet());
 
 app.use(bodyParser.json());
@@ -69,6 +70,8 @@ app.use('*', (req, res, next) => {
   const err = new NotFoundError('Неверный адрес запроса');
   return next(err);
 });
+
+app.use(errorLogger); // логирование ошибок после запросов
 app.use(errors()); // обработчик ошибок celebrate
 
 app.use((err, req, res, next) => {
