@@ -64,8 +64,8 @@ app.post(
   createUser,
 );
 
-app.use('/users', usersRoute);
-app.use('/cards', auth, cardsRoute);
+app.use('api/users', usersRoute);
+app.use('api/cards', auth, cardsRoute);
 app.use('*', (req, res, next) => {
   const err = new NotFoundError('Неверный адрес запроса');
   return next(err);
