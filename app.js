@@ -40,7 +40,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.post(
-  '/signin',
+  'api/signin',
   celebrate({
     body: Joi.object().keys({
       email: Joi.string().email().required(),
@@ -51,7 +51,7 @@ app.post(
 );
 
 app.post(
-  '/signup',
+  'api/signup',
   celebrate({
     body: Joi.object().keys({
       email: Joi.string().email().required(),
