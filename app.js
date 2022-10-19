@@ -40,7 +40,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.post(
-  'api/signin',
+  '/api/signin',
   celebrate({
     body: Joi.object().keys({
       email: Joi.string().email().required(),
@@ -51,7 +51,7 @@ app.post(
 );
 
 app.post(
-  'api/signup',
+  '/api/signup',
   celebrate({
     body: Joi.object().keys({
       email: Joi.string().email().required(),
@@ -64,8 +64,8 @@ app.post(
   createUser,
 );
 
-app.use('api/users', usersRoute);
-app.use('api/cards', auth, cardsRoute);
+app.use('/api/users', usersRoute);
+app.use('/api/cards', auth, cardsRoute);
 app.use('*', (req, res, next) => {
   const err = new NotFoundError('Неверный адрес запроса');
   return next(err);
